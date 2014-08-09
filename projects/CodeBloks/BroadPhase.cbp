@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="BroadPhase" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="DebugWin32">
+				<Option output="../../bin/BroadPhase" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++98" />
+					<Add option="-g" />
+					<Add option="-DPROFILE" />
+					<Add directory="../../" />
+				</Compiler>
+				<Linker>
+					<Add library="gdi32" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseWin32">
+				<Option output="../../bin/BroadPhase" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-std=c++98" />
+					<Add option="-DPROFILE" />
+					<Add directory="../../" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="gdi32" />
+				</Linker>
+			</Target>
+			<Target title="DebugLinux">
+				<Option output="../../bin/BroadPhase" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++98" />
+					<Add option="-g" />
+					<Add option="-DPROFILE" />
+					<Add directory="../../" />
+				</Compiler>
+				<Linker>
+					<Add library="X11" />
+					<Add library="pthread" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseLinux">
+				<Option output="../../bin/BroadPhase" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-std=c++98" />
+					<Add option="-DPROFILE" />
+					<Add directory="../../" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="X11" />
+					<Add library="pthread" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../../src/Ball.cpp" />
+		<Unit filename="../../src/Ball.h" />
+		<Unit filename="../../src/BroadPhase.cpp" />
+		<Unit filename="../../src/BroadPhase.h" />
+		<Unit filename="../../src/CDebugDrawer.cpp" />
+		<Unit filename="../../src/CDebugDrawer.h" />
+		<Unit filename="../../src/Chain.cpp" />
+		<Unit filename="../../src/Chain.h" />
+		<Unit filename="../../src/Collision.h" />
+		<Unit filename="../../src/CollisionSolver.cpp" />
+		<Unit filename="../../src/CollisionSolver.h" />
+		<Unit filename="../../src/GeometryOperations2D.h" />
+		<Unit filename="../../src/IBody.h" />
+		<Unit filename="../../src/IDebugDrawer.h" />
+		<Unit filename="../../src/Main.cpp" />
+		<Unit filename="../../src/NarrowPhase.cpp" />
+		<Unit filename="../../src/NarrowPhase.h" />
+		<Unit filename="../../src/Profiler.h" />
+		<Unit filename="../../src/VisualizationWinow.cpp" />
+		<Unit filename="../../src/VisualizationWinow.h" />
+		<Unit filename="../../src/aabb.h" />
+		<Unit filename="../../src/vector2d.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
