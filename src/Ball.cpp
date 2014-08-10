@@ -1,6 +1,4 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <cfloat>
+#include "StdAfx.h"
 #include "vector2d.h"
 #include "aabb.h"
 #include "IBody.h"

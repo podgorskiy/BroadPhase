@@ -87,8 +87,3 @@ inline vector2d<T> operator / (const vector2d<T>& a, const T s) { return vector2
 
 /// Typedef for single precision 2d vector.
 typedef vector2d<float> vector2df;
-
-
-#ifndef M_PI
-#    define M_PI 3.14159265358979323846
-#endif

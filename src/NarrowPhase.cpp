@@ -1,7 +1,4 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <cfloat>
-#include <vector>
+#include "StdAfx.h"
 #include "vector2d.h"
 #include "GeometryOperations2D.h"
 #include "aabb.h"
@@ -9,17 +6,12 @@
 #include "IBody.h"
 #include "Ball.h"
 #include "Chain.h"
-#include "NarrowPhase.h"
 #include "Profiler.h"
+#include "NarrowPhase.h"
 
 NarrowPhase::NarrowPhase(int bodiesCount)
 {
 	collisionsList.reserve(2 * bodiesCount);
-}
-
-unsigned long long NarrowPhase::GetConumedTime()
-{
-	return m_consumedTime;
 }
 
 int NarrowPhase::GetNumOfCollisions()
@@ -29,10 +21,8 @@ int NarrowPhase::GetNumOfCollisions()
 
 const std::vector<Collision>& NarrowPhase::DetectCollisions(const std::vector<std::pair<int, int> >& overlapingList, const std::vector<IBody*>& bodies)
 {
-#ifdef PROFILE
-	TinyProfiler profiler;
-#endif
-	m_collisionNumber = 0;
+	TimeProfiler broadPhaseTime(this, ProfileScopes::NarrowPhase);
+
 	collisionsList.clear();
 	for (std::vector<std::pair<int, int> >::const_iterator it = overlapingList.begin(); it != overlapingList.end(); ++it)
 	{
@@ -51,7 +41,7 @@ const std::vector<Collision>& NarrowPhase::DetectCollisions(const std::vector<st
 					collision.m_indexA = it->first;
 					collision.m_indexB = it->second;
 					collisionsList.push_back(collision);
-					m_collisionNumber++;
+					IncValue(ProfileScopes::CountOfCollisionsOccurred);
 				}
 			}
 			break;
@@ -71,15 +61,14 @@ const std::vector<Collision>& NarrowPhase::DetectCollisions(const std::vector<st
 					collision.m_indexA = indexA;
 					collision.m_indexB = indexB;
 					collisionsList.push_back(collision);
-					m_collisionNumber++;
+					IncValue(ProfileScopes::CountOfCollisionsOccurred);
 				}
 			}
 			break;
 		}
 	}
-#ifdef PROFILE
-	m_consumedTime = profiler.GetTime();
-#endif
+
+	SubmitValue(ProfileScopes::CountOfCollisionsOccurred);
 	return collisionsList;
 }
 

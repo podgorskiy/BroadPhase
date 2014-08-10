@@ -1,6 +1,6 @@
-#include "VisualizationWinow.h"
-#include <cassert>
+#include "StdAfx.h"
 #include <cimg/CImg.h>
+#include "VisualizationWinow.h"
 
 using namespace cimg_library;
 
@@ -101,7 +101,7 @@ void VisualizationWinow::DrawLine(float wx0, float wy0, float wx1, float wy1, co
 }
 
 
-void VisualizationWinow::DrawTextL(const char* text, int s_x, int s_y, const unsigned char* color) const
+void VisualizationWinow::DrawTextL(std::string text, int s_x, int s_y, const unsigned char* color) const
 {
-	m_canvas->draw_text(s_x, s_y, text, wight, black, 1, 15, 1.0f, 15);
+	m_canvas->draw_text(s_x, s_y, text.c_str(), wight, black, 1, 15, 1.0f, 15);
 }

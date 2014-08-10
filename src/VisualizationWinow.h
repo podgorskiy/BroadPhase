@@ -34,7 +34,7 @@ public:
 	void DrawSequenceOfLines(int n, const T* points, const unsigned char* color) const;
 	template<typename T>
 	void DrawSequenceOfLines(const T& points, const unsigned char* color) const;
-	void DrawTextL(const char* text, int s_x, int s_y, const unsigned char* color) const;
+	void DrawTextL(std::string text, int s_x, int s_y, const unsigned char* color) const;
 private:
 	void DrawLineScreenSpace(int x0, int y0, int x1, int y1, const unsigned char* color) const;
 	cimg_library::CImgDisplay* m_disp;
@@ -72,3 +72,44 @@ void VisualizationWinow::DrawSequenceOfLines(const T& points, const unsigned cha
 		y0 = y1;
 	}
 }
+
+class OutputValue
+{
+private:
+	enum type
+	{
+		Integer,
+		Float
+	};
+public:
+	OutputValue(const char* formatString, int i) :
+		m_formatString(formatString), m_iValue(i), m_type(Integer){};
+	OutputValue(const char* formatString, float f) :
+		m_formatString(formatString), m_fValue(f), m_type(Float){};
+	std::string operator()() const
+	{
+		char buff[1024];
+		switch (m_type)
+		{
+		case Integer: sprintf(buff, m_formatString, m_iValue); break;
+		case Float: sprintf(buff, m_formatString, m_fValue); break;
+		}
+		return buff;
+	};
+private:
+	const char* m_formatString;
+	int		m_iValue;
+	double	m_fValue;
+	type	m_type;
+};
+
+// Output debug information
+struct OutputDebug
+{
+	OutputDebug(const char* formatString, int i, const unsigned char* color) :
+	m_value(formatString, i), m_color(color){};
+	OutputDebug(const char* formatString, float f, const unsigned char* color) :
+		m_value(formatString, f), m_color(color){};
+	OutputValue m_value;
+	const unsigned char* m_color;
+};

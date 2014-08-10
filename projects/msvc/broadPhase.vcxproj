@@ -65,14 +65,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>PROFILE; WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,6 +89,10 @@
     <ClCompile Include="..\..\src\CDebugDrawer.cpp" />
     <ClCompile Include="..\..\src\Chain.cpp" />
     <ClCompile Include="..\..\src\NarrowPhase.cpp" />
+    <ClCompile Include="..\..\src\Profiler.cpp" />
+    <ClCompile Include="..\..\src\StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\src\VisualizationWinow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -99,11 +103,13 @@
     <ClInclude Include="..\..\src\Chain.h" />
     <ClInclude Include="..\..\src\Collision.h" />
     <ClInclude Include="..\..\src\CollisionSolver.h" />
+    <ClInclude Include="..\..\src\config.h" />
     <ClInclude Include="..\..\src\GeometryOperations2D.h" />
     <ClInclude Include="..\..\src\IBody.h" />
     <ClInclude Include="..\..\src\IDebugDrawer.h" />
     <ClInclude Include="..\..\src\NarrowPhase.h" />
     <ClInclude Include="..\..\src\Profiler.h" />
+    <ClInclude Include="..\..\src\StdAfx.h" />
     <ClInclude Include="..\..\src\vector2d.h" />
     <ClInclude Include="..\..\src\VisualizationWinow.h" />
   </ItemGroup>

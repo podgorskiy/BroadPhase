@@ -1,13 +1,10 @@
-class BroadPhase
+class BroadPhase : PerformanceMeasurementsHelper
 {
 public:
 	BroadPhase(int bodiesCount);
 
 	void UpdateAABBList(std::vector<IBody*> bodiesList);
 	const std::vector<std::pair<int, int> >& GenerateOverlapList();
-	unsigned long long GetConumedTime();
-	int GetNumOfChecks();
-	int GetNumOfPotentialCollisions();
 
 private:
 	std::vector<aabb2df> m_aabbList;

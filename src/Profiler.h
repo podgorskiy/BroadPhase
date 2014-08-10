@@ -1,97 +1,81 @@
 #pragma once
-#include <stdio.h>
+#include "config.h"
 
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <sys/time.h>
-#endif
+class IParameter;
 
-class TinyProfiler
+class PerformanceMeasurementsHelper
+{
+	friend class IParameter;
+
+public:
+	static int GetParameter(ProfileScopes::Scope scope);
+
+protected:
+	void SetValue(ProfileScopes::Scope scope, long value);
+	void IncValue(ProfileScopes::Scope scope);
+	void SubmitValue(ProfileScopes::Scope scope);
+
+private:
+	static int m_parameters[ProfileScopes::CountOfProfileScopes];
+	static int m_pAccumulator[ProfileScopes::CountOfProfileScopes];
+	static int m_pAccumulatorItCount[ProfileScopes::CountOfProfileScopes];
+	unsigned long m_consumedTime;
+};
+
+class IParameter
 {
 public:
-	TinyProfiler(const char* name)
-	{
-		m_name = name;
-		m_startTime = GetNanoSeconds();
-		quiet = false;
-	};
+	IParameter(PerformanceMeasurementsHelper* owner, ProfileScopes::Scope scope)
+		: m_value(0), m_owner(owner), m_scope(scope)
+	{};
 
-	TinyProfiler()
-	{
-		m_name = "";
-		m_startTime = GetNanoSeconds();
-		quiet = true;
-	};
+	virtual ~IParameter();
 
-	unsigned long long GetTime()
-	{
-		quiet = true;
-		return GetNanoSeconds() - m_startTime;
-	};
-
-	~TinyProfiler()
-	{
-		if (quiet)
-			return;
-		unsigned long long diffrence = GetNanoSeconds() - m_startTime;
-		if (diffrence < 10000)
-		{
-			unsigned int d = int(diffrence);
-			printf("%-50s: %6uus", m_name, d);
-		}
-		else
-		{
-			if (diffrence < 10000000)
-			{
-				unsigned int d = int(diffrence / 1000);
-				printf("%-50s: %6ums", m_name, d);
-			}
-			else
-			{
-				unsigned int d = int(diffrence / 1000000);
-				printf("%-50s: %6ds", m_name, d);
-			}
-		}
-	};
-private:
-
-	unsigned long long GetNanoSeconds()
-	{
-		return (unsigned long long)(GetSecondsDouble() * 1e9);
-	}
-	double GetSecondsDouble()
-	{
-		return double(GetTicks()) / double(GetTicksPerSecond());
-	}
-#ifdef WIN32
-	unsigned long long GetTicks()
-	{
-		LARGE_INTEGER ticks;
-		QueryPerformanceCounter(&ticks);
-		return ticks.QuadPart;
-	}
-	unsigned long long GetTicksPerSecond()
-	{
-		LARGE_INTEGER tickPerSeconds;
-		QueryPerformanceFrequency(&tickPerSeconds);
-		return tickPerSeconds.QuadPart;
-	}
-
-#else
-unsigned long GetTicks() {
-	struct timeval tp;
-	gettimeofday(&tp, 0);
-	double time = double(tp.tv_sec) * 1000000 + tp.tv_usec;
-
-	return static_cast<unsigned long long>(time);
-}
-
-unsigned long long GetTicksPerSecond() {
-	return 1000000;
-}
-#endif
-	const char* m_name;
-	unsigned long long m_startTime;
-	bool quiet;
+protected:
+	long m_value;
+	PerformanceMeasurementsHelper* m_owner;
+	ProfileScopes::Scope  m_scope;
 };
+
+class TimeProfiler : public IParameter
+{
+public:
+	TimeProfiler(PerformanceMeasurementsHelper* owner, ProfileScopes::Scope scope);
+
+	virtual ~TimeProfiler();
+	long GetTime();
+
+private:
+	unsigned long long GetTicks();
+	unsigned long long GetTicksPerSecond();
+	unsigned long long m_startTime;
+};
+
+inline void PerformanceMeasurementsHelper::SetValue(ProfileScopes::Scope scope, long value)
+{
+    m_pAccumulator[scope] += value;
+    SubmitValue(scope);
+}
+
+inline void PerformanceMeasurementsHelper::IncValue(ProfileScopes::Scope scope)
+{
+	++m_pAccumulator[scope];
+}
+
+inline void PerformanceMeasurementsHelper::SubmitValue(ProfileScopes::Scope scope)
+{
+    int iteration = ++m_pAccumulatorItCount[scope];
+    if (iteration >= OUTPUT_AVERAGE_OF)
+    {
+        m_pAccumulatorItCount[scope] = 0;
+        m_parameters[scope] = m_pAccumulator[scope] / iteration;
+        m_pAccumulator[scope] = 0;
+    }
+}
+
+inline IParameter::~IParameter()
+{
+	m_owner->SetValue(m_scope, m_value);
+};
+
+void SleepMS(int ms);

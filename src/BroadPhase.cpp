@@ -1,32 +1,14 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <cfloat>
-#include <vector>
+#include "StdAfx.h"
 #include "vector2d.h"
 #include "aabb.h"
 #include "IBody.h"
-#include "BroadPhase.h"
 #include "Profiler.h"
+#include "BroadPhase.h"
 
 BroadPhase::BroadPhase(int bodiesCount) : m_consumedTime(0), m_countOfChecks(0), m_countOfPotentialCollisions(0)
 {
 	m_aabbList.reserve(bodiesCount);
 	m_overlapingList.reserve( 5 * bodiesCount); //rough estimate
-}
-
-unsigned long long BroadPhase::GetConumedTime()
-{
-	return m_consumedTime;
-}
-
-int BroadPhase::GetNumOfPotentialCollisions()
-{
-	return m_countOfPotentialCollisions;
-}
-
-int BroadPhase::GetNumOfChecks()
-{
-	return m_countOfChecks;
 }
 
 void BroadPhase::UpdateAABBList(std::vector<IBody*> bodiesList)
@@ -41,11 +23,8 @@ void BroadPhase::UpdateAABBList(std::vector<IBody*> bodiesList)
 
 const std::vector<std::pair<int, int> >& BroadPhase::GenerateOverlapList()
 {
-#ifdef PROFILE
-	TinyProfiler profiler;
-#endif
-	m_countOfChecks = 0;
-	m_countOfPotentialCollisions = 0;
+	TimeProfiler broadPhaseTime(this, ProfileScopes::BroadPhase);
+
 	m_overlapingList.clear();
 	int indexA = 0;
 	for (std::vector<aabb2df>::const_iterator ita = m_aabbList.begin(); ita != m_aabbList.end(); ++ita, ++indexA)
@@ -56,13 +35,13 @@ const std::vector<std::pair<int, int> >& BroadPhase::GenerateOverlapList()
 			if (Overlapping(*ita, *itb))
 			{
 				m_overlapingList.push_back(std::pair<int, int>(indexA, indexB));
-				m_countOfPotentialCollisions++;
+				IncValue(ProfileScopes::CountOfPotentialCollisions);
 			}
-			m_countOfChecks++;
+			IncValue(ProfileScopes::CountOfChecksInBroadPhase);
 		}
 	}
-#ifdef PROFILE
-	m_consumedTime = profiler.GetTime();
-#endif
+
+	SubmitValue(ProfileScopes::CountOfChecksInBroadPhase);
+	SubmitValue(ProfileScopes::CountOfPotentialCollisions);
 	return m_overlapingList;
 }

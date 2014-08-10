@@ -1,23 +1,17 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <cstdlib>
-#include <vector>
-#include <sstream>
+#include "StdAfx.h"
 #include "VisualizationWinow.h"
-#include <cfloat>
 #include "vector2d.h"
-#include "GeometryOperations2D.h"
 #include "aabb.h"
 #include "IDebugDrawer.h"
 #include "CDebugDrawer.h"
 #include "IBody.h"
 #include "Ball.h"
 #include "Chain.h"
+#include "Profiler.h"
 #include "BroadPhase.h"
 #include "Collision.h"
 #include "NarrowPhase.h"
 #include "CollisionSolver.h"
-#include "Profiler.h"
 
 
 /// a function that fills the bodies container with some random balls and chains
@@ -77,50 +71,30 @@ int main(int argc,char **argv)
 			(*it)->DebugDraw(debugDrawer);
 		}
 
-		// Output debug information
-		unsigned long long broadPhasetime = broadPhase->GetConumedTime();
-		std::ostringstream ss;
-		ss << "Broad phase time: " << broadPhasetime / 1000 << broadPhasetime % 1000;
-		std::string bdroadPhaseInfo(ss.str());
-		window.DrawTextL(bdroadPhaseInfo.c_str(), 5, 50, wight);
+		// Output of debug information
+		std::vector<OutputDebug> outputBuffer;
+		outputBuffer.push_back(OutputDebug("Broad phase time: %.1fus",
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::BroadPhase) / 1000.0f, wight));
+		outputBuffer.push_back(OutputDebug("Narrow phase time: %.1fus",
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::NarrowPhase) / 1000.0f, wight));
+		outputBuffer.push_back(OutputDebug("Collision solver time: %.1fus",
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CollisionSolver) / 1000.0f, wight));
+		outputBuffer.push_back(OutputDebug("Number of checks in broad phase: %d",
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfChecksInBroadPhase), wight));
+		outputBuffer.push_back(OutputDebug("Number of potential collisions: %d",
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfPotentialCollisions), wight));
+		outputBuffer.push_back(OutputDebug("Number of collisions occurred: %d",
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfCollisionsOccurred), wight));
 
-		// Output debug information
-		unsigned long long narrowPhaseTime = narrowPhase->GetConumedTime();
-		std::ostringstream ss2;
-		ss2 << "Narrow phase time: " << narrowPhaseTime / 1000 << narrowPhaseTime % 1000;
-		std::string narrowPhaseInfo(ss2.str());
-		window.DrawTextL(narrowPhaseInfo.c_str(), 5, 70, wight);
-
-		// Output debug information
-		unsigned long long collisionSolverTime = collisionSolver->GetConumedTime();
-		std::ostringstream ss3; 
-		ss3 << "Collision solver time: " << collisionSolverTime / 1000 << collisionSolverTime % 1000;
-		std::string collisionSolverInfo(ss3.str());
-		window.DrawTextL(collisionSolverInfo.c_str(), 5, 90, wight);
-
-		// Output debug information
-		int numOfChecks = broadPhase->GetNumOfChecks();
-		std::ostringstream ss4;
-		ss4 << "Number of checks in broad phase: " << numOfChecks;
-		std::string numOfChecksInfo(ss4.str());
-		window.DrawTextL(numOfChecksInfo.c_str(), 5, 130, wight);
-
-		// Output debug information
-		int numOfPotentialCollisions = broadPhase->GetNumOfPotentialCollisions();
-		std::ostringstream ss5;
-		ss5 << "Number of potential collisions: " << numOfPotentialCollisions;
-		std::string numOfPotentialCollisionsInfo(ss5.str());
-		window.DrawTextL(numOfPotentialCollisionsInfo.c_str(), 5, 150, wight);
-
-		// Output debug information
-		int numOfCollisions = narrowPhase->GetNumOfCollisions();
-		std::ostringstream ss6;
-		ss6 << "Number of collisions occurred: " << numOfCollisions;
-		std::string numOfCollisionsInfo(ss6.str());
-		window.DrawTextL(numOfCollisionsInfo.c_str(), 5, 170, wight);
+		vector2d<int> textPosition(5, 20);
+		for (std::vector<OutputDebug>::const_iterator it = outputBuffer.begin(); it != outputBuffer.end(); ++it, textPosition.y+=20)
+		{
+			window.DrawTextL(it->m_value().c_str(), textPosition.x, textPosition.y, it->m_color);
+		}
 
 		window.EndDraw();
-		//_sleep(10);
+
+		SleepMS(10);
 	}
 
 	delete broadPhase;

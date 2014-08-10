@@ -1,7 +1,4 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <cfloat>
-#include <vector>
+#include "StdAfx.h"
 #include "vector2d.h"
 #include "GeometryOperations2D.h"
 #include "aabb.h"
@@ -9,19 +6,13 @@
 #include "IBody.h"
 #include "Ball.h"
 #include "Chain.h"
-#include "CollisionSolver.h"
 #include "Profiler.h"
-
-unsigned long long CollisionSolver::GetConumedTime()
-{
-	return m_consumedTime;
-}
+#include "CollisionSolver.h"
 
 void CollisionSolver::ResolveCollisions(const std::vector<Collision>& collisionList, const std::vector<IBody*>& bodies)
 {
-#ifdef PROFILE
-	TinyProfiler profiler;
-#endif
+	TimeProfiler broadPhaseTime(this, ProfileScopes::CollisionSolver);
+
 	for (std::vector<Collision>::const_iterator it = collisionList.begin(); it != collisionList.end(); ++it)
 	{
 		IBody* bodyA = bodies[it->m_indexA];
@@ -46,9 +37,6 @@ void CollisionSolver::ResolveCollisions(const std::vector<Collision>& collisionL
 			break;
 		}
 	}
-#ifdef PROFILE
-	m_consumedTime = profiler.GetTime();
-#endif
 }
 
 float calc_impulse_p_p(float e, float sv, float nx, float ny, float ma, float mb, vector2df rap, vector2df rbp, float ia, float ib)
@@ -84,8 +72,8 @@ void CollisionSolver::ResolveBallToBallCollision(Ball& ballA, Ball& ballB, const
 
 		velocityA -= imp * invMassA * collision.m_collisionNormal;
 		velocityB += imp * invMassB * collision.m_collisionNormal;
-		//angularVelocityA += imp * Cross(rap, collision.m_collisionNormal) * ballA.GetInvMomentumOfI();
-		//angularVelocityB -= imp * Cross(rbp, collision.m_collisionNormal) * ballB.GetInvMomentumOfI();
+		angularVelocityA += imp * Cross(rap, collision.m_collisionNormal) * ballA.GetInvMomentumOfI();
+		angularVelocityB -= imp * Cross(rbp, collision.m_collisionNormal) * ballB.GetInvMomentumOfI();
 
 
 		// friction
