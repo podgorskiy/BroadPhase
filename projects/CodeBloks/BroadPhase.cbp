@@ -49,6 +49,7 @@
 		<Unit filename="../../src/Ball.h" />
 		<Unit filename="../../src/BroadPhase.cpp" />
 		<Unit filename="../../src/BroadPhase.h" />
+		<Unit filename="../../src/BroadPhaseNaive.h" />
 		<Unit filename="../../src/CDebugDrawer.cpp" />
 		<Unit filename="../../src/CDebugDrawer.h" />
 		<Unit filename="../../src/Chain.cpp" />
@@ -58,12 +59,14 @@
 		<Unit filename="../../src/CollisionSolver.h" />
 		<Unit filename="../../src/GeometryOperations2D.h" />
 		<Unit filename="../../src/IBody.h" />
+		<Unit filename="../../src/IBroadPhase.h" />
 		<Unit filename="../../src/IDebugDrawer.h" />
 		<Unit filename="../../src/Main.cpp" />
 		<Unit filename="../../src/NarrowPhase.cpp" />
 		<Unit filename="../../src/NarrowPhase.h" />
 		<Unit filename="../../src/Profiler.cpp" />
 		<Unit filename="../../src/Profiler.h" />
+		<Unit filename="../../src/StdAfx.cpp" />
 		<Unit filename="../../src/StdAfx.h">
 			<Option compile="1" />
 			<Option weight="0" />

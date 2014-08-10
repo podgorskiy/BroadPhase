@@ -8,7 +8,8 @@
 #include "Ball.h"
 #include "Chain.h"
 #include "Profiler.h"
-#include "BroadPhase.h"
+#include "IBroadPhase.h"
+#include "BroadPhaseNaive.h"
 #include "Collision.h"
 #include "NarrowPhase.h"
 #include "CollisionSolver.h"
@@ -26,7 +27,7 @@ int main(int argc,char **argv)
 	// fill the container with some bodies.
 	CreateWorld(bodies);
 
-	BroadPhase * broadPhase				= new BroadPhase(bodies.size());
+	IBroadPhase * broadPhase			= new BroadPhaseNaive(bodies.size());
 	NarrowPhase* narrowPhase			= new NarrowPhase(bodies.size());
 	CollisionSolver* collisionSolver	= new CollisionSolver;
 

@@ -98,7 +98,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\aabb.h" />
     <ClInclude Include="..\..\src\Ball.h" />
-    <ClInclude Include="..\..\src\BroadPhase.h" />
+    <ClInclude Include="..\..\src\BroadPhaseNaive.h" />
     <ClInclude Include="..\..\src\CDebugDrawer.h" />
     <ClInclude Include="..\..\src\Chain.h" />
     <ClInclude Include="..\..\src\Collision.h" />
@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\src\config.h" />
     <ClInclude Include="..\..\src\GeometryOperations2D.h" />
     <ClInclude Include="..\..\src\IBody.h" />
+    <ClInclude Include="..\..\src\IBroadPhase.h" />
     <ClInclude Include="..\..\src\IDebugDrawer.h" />
     <ClInclude Include="..\..\src\NarrowPhase.h" />
     <ClInclude Include="..\..\src\Profiler.h" />

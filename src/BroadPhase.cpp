@@ -3,15 +3,16 @@
 #include "aabb.h"
 #include "IBody.h"
 #include "Profiler.h"
-#include "BroadPhase.h"
+#include "IBroadPhase.h"
+#include "BroadPhaseNaive.h"
 
-BroadPhase::BroadPhase(int bodiesCount) : m_consumedTime(0), m_countOfChecks(0), m_countOfPotentialCollisions(0)
+BroadPhaseNaive::BroadPhaseNaive(int bodiesCount)
 {
 	m_aabbList.reserve(bodiesCount);
 	m_overlapingList.reserve( 5 * bodiesCount); //rough estimate
 }
 
-void BroadPhase::UpdateAABBList(std::vector<IBody*> bodiesList)
+void BroadPhaseNaive::UpdateAABBList(std::vector<IBody*> bodiesList)
 {
 	m_aabbList.resize(bodiesList.size());
 	int index = 0;
@@ -21,7 +22,7 @@ void BroadPhase::UpdateAABBList(std::vector<IBody*> bodiesList)
 	}
 }
 
-const std::vector<std::pair<int, int> >& BroadPhase::GenerateOverlapList()
+const std::vector<std::pair<int, int> >& BroadPhaseNaive::GenerateOverlapList()
 {
 	TimeProfiler broadPhaseTime(this, ProfileScopes::BroadPhase);
 

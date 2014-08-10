@@ -217,3 +217,4 @@ $RECYCLE.BIN/
 *.depend
 *.layout
 *.bak
+src/StdAfx.h.gch/Release_Linux_src_StdAfx_h_gch
