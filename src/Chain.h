@@ -27,6 +27,20 @@ public:
 	virtual void		DebugDraw(IDebugDrawer* drawer);
 
 	void				AddVertex(const vector2df& v);
+	void				AddVertices(const vector2df* v, int count);
+	void				AddVertices(const float* v, int count);
+
+	template <unsigned N>
+	void				AddVertices(const vector2df (&v)[N])
+	{
+		AddVertices(&v[0], N);
+	};
+	template <unsigned N>
+	void				AddVertices(const float (&v)[N])
+	{
+		AddVertices(&v[0], N);
+	};
+
 	const std::vector<vector2df>& GetVertices() const;
 
 private:

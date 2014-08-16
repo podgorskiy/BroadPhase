@@ -14,6 +14,12 @@ struct ProfileScopes
 		CountOfChecksInBroadPhase,
 		CountOfPotentialCollisions,
 		CountOfCollisionsOccurred,
+		CountOfSwaps,
+		CountOfEventsDispatched,
+		UpdateEndPoint,
+		UpdateIntervals,
+		ConsumeEvents,
+		CreateOverlapingList,
 
 		CountOfProfileScopes
 	};

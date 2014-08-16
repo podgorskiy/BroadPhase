@@ -32,6 +32,26 @@ void Chain::AddVertex(const vector2df& v)
 	m_aabb.AddPoint(v);
 }
 
+void Chain::AddVertices(const vector2df* v, int count)
+{
+	for (int i = 0; i < count; ++i)
+	{
+		m_vertices.push_back(v[i]);
+		m_aabb.AddPoint(v[i]);
+	}
+}
+
+void Chain::AddVertices(const float* v, int count)
+{
+    assert(count % 2 == 0);
+	for (int i = 0; i < count / 2; ++i)
+	{
+	    vector2df p(v[2 * i], v[2 * i + 1]);
+		m_vertices.push_back(p);
+		m_aabb.AddPoint(p);
+	}
+}
+
 const std::vector<vector2df>& Chain::GetVertices() const
 {
 	return m_vertices;

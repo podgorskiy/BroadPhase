@@ -9,10 +9,10 @@
 BroadPhaseNaive::BroadPhaseNaive(int bodiesCount)
 {
 	m_aabbList.reserve(bodiesCount);
-	m_overlapingList.reserve( 5 * bodiesCount); //rough estimate
+	m_overlapingList.reserve(5 * bodiesCount); //rough estimate
 }
 
-void BroadPhaseNaive::UpdateAABBList(std::vector<IBody*> bodiesList)
+void BroadPhaseNaive::UpdateAABBList(const std::vector<IBody*> bodiesList)
 {
 	m_aabbList.resize(bodiesList.size());
 	int index = 0;
@@ -35,14 +35,13 @@ const std::vector<std::pair<int, int> >& BroadPhaseNaive::GenerateOverlapList()
 		{
 			if (Overlapping(*ita, *itb))
 			{
-				m_overlapingList.push_back(std::pair<int, int>(indexA, indexB));
-				IncValue(ProfileScopes::CountOfPotentialCollisions);
+				m_overlapingList.push_back(std::make_pair(indexA, indexB));
 			}
 			IncValue(ProfileScopes::CountOfChecksInBroadPhase);
 		}
 	}
 
 	SubmitValue(ProfileScopes::CountOfChecksInBroadPhase);
-	SubmitValue(ProfileScopes::CountOfPotentialCollisions);
+	SetValue(ProfileScopes::CountOfPotentialCollisions, m_overlapingList.size());
 	return m_overlapingList;
 }

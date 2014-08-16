@@ -16,6 +16,7 @@
 					<Add option="-g" />
 					<Add option="-Winvalid-pch" />
 					<Add directory="../../" />
+					<Add directory="../../tclap/include/" />
 				</Compiler>
 				<Linker>
 					<Add library="X11" />
@@ -33,6 +34,7 @@
 					<Add option="-std=c++98" />
 					<Add option="-Winvalid-pch" />
 					<Add directory="../../" />
+					<Add directory="../../tclap/include/" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -47,9 +49,11 @@
 		</Compiler>
 		<Unit filename="../../src/Ball.cpp" />
 		<Unit filename="../../src/Ball.h" />
-		<Unit filename="../../src/BroadPhase.cpp" />
 		<Unit filename="../../src/BroadPhase.h" />
+		<Unit filename="../../src/BroadPhaseNaive.cpp" />
 		<Unit filename="../../src/BroadPhaseNaive.h" />
+		<Unit filename="../../src/BroadPhaseSS.cpp" />
+		<Unit filename="../../src/BroadPhaseSS.h" />
 		<Unit filename="../../src/CDebugDrawer.cpp" />
 		<Unit filename="../../src/CDebugDrawer.h" />
 		<Unit filename="../../src/Chain.cpp" />
@@ -62,6 +66,7 @@
 		<Unit filename="../../src/IBroadPhase.h" />
 		<Unit filename="../../src/IDebugDrawer.h" />
 		<Unit filename="../../src/Main.cpp" />
+		<Unit filename="../../src/Main.h" />
 		<Unit filename="../../src/NarrowPhase.cpp" />
 		<Unit filename="../../src/NarrowPhase.h" />
 		<Unit filename="../../src/Profiler.cpp" />
