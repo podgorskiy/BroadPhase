@@ -1,12 +1,12 @@
 #pragma once
 
 const unsigned char
-    wight[] = { 255,255,255 },
-    red[]   = { 255,0,0 },
-    yellow[]   = { 255,255,0 },
-    green[] = { 0,255,0 },
-    blue [] = { 0,0,255 },
-    black[] = { 0,0,0 };
+	wight[]		= { 255,255,255 },
+	red[]		= { 255,0,0 },
+	yellow[]	= { 255,255,0 },
+	green[]		= { 0,255,0 },
+	blue []		= { 0,0,255 },
+	black[]		= { 0,0,0 };
 
 namespace cimg_library
 {
@@ -91,8 +91,12 @@ public:
 		char buff[1024];
 		switch (m_type)
 		{
-		case Integer: sprintf(buff, m_formatString, m_iValue); break;
-		case Float: sprintf(buff, m_formatString, m_fValue); break;
+			case Integer: 
+				sprintf(buff, m_formatString, m_iValue); 
+				break;
+			case Float: 
+				sprintf(buff, m_formatString, m_fValue); 
+				break;
 		}
 		return buff;
 	};

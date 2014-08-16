@@ -17,6 +17,10 @@
   image processing. Project uses only the main library file 'CImg.h' that 
   is *dual-licensed*: It can be either distributed under the CeCILL-C or 
   CeCILL license.
+  
+  This project uses TCLAP - Templatized Command Line Argument Parser. This 
+  is a simple C++ library that facilitates parsing command line arguments 
+  in a type independent manner.
 	 
   Licensing
   ---------

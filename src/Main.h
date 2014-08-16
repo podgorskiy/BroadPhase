@@ -8,9 +8,9 @@ public:
 		ScreenHeight = 768
 	};
 
-	Application(int subStepsCount, bool sortAndSweep):
+	Application(int subStepsCount, bool sortAndSweep, int framesToMeasure) :
 		m_broadPhase(NULL), m_narrowPhase(NULL), m_collisionSolver(NULL), m_debugDrawer(NULL),
-		m_subStepsCount(subStepsCount), m_sortAndSweep(sortAndSweep){};
+		m_subStepsCount(subStepsCount), m_sortAndSweep(sortAndSweep), m_framesToMeasure(framesToMeasure), m_framesN(0){};
 	~Application();
 
 	/// Initialize internal modules, visualisation window, debug drawer and so on.
@@ -21,6 +21,9 @@ public:
 
 	/// Print some frame info. Prints broad phase, narrow phase and collision solver time.
 	void DrawFrameInfo();
+
+	/// Print simulation statistics
+	void PrintStatistics();
 
 	/// Application run loop
 	void Run();
@@ -38,4 +41,6 @@ private:
 
 	int m_subStepsCount;
 	bool m_sortAndSweep;
+	const int m_framesToMeasure;
+	int m_framesN;
 };

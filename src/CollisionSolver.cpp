@@ -23,26 +23,20 @@ void CollisionSolver::ResolveCollisions(const std::vector<Collision>& collisionL
 		{
 		case IBody::BTypeBall:	//ball to ball collision
 		{
-									Ball* ballA = static_cast<Ball*>(bodyA);
-									Ball* ballB = static_cast<Ball*>(bodyB);
-									ResolveBallToBallCollision(*ballA, *ballB, *it);
+			Ball* ballA = static_cast<Ball*>(bodyA);
+			Ball* ballB = static_cast<Ball*>(bodyB);
+			ResolveBallToBallCollision(*ballA, *ballB, *it);
 		}
 			break;
 		case IBody::BTypeBall | IBody::BTypeChain: //ball to chain collision
 		{
-													   Ball* ball = static_cast<Ball*>(bodyA);
-													   Chain* chain = static_cast<Chain*>(bodyB);
-													   ResolveBallToChainCollision(*ball, *chain, *it);
+			Ball* ball = static_cast<Ball*>(bodyA);
+			Chain* chain = static_cast<Chain*>(bodyB);
+			ResolveBallToChainCollision(*ball, *chain, *it);
 		}
 			break;
 		}
 	}
-}
-
-float calc_impulse_p_p(float e, float sv, float nx, float ny, float ma, float mb, vector2df rap, vector2df rbp, float ia, float ib)
-{
-	float tmp = 1 / ma + 1 / mb + pow(rap.x*ny - rap.y*nx, 2) / ia + pow(rbp.x*ny - rbp.y*nx, 2) / ib;
-	return -(1 + e)*sv / tmp;
 }
 
 void CollisionSolver::ResolveBallToBallCollision(Ball& ballA, Ball& ballB, const Collision& collision)
@@ -55,6 +49,8 @@ void CollisionSolver::ResolveBallToBallCollision(Ball& ballA, Ball& ballB, const
 	vector2df posB = ballB.GetPosition();
 	float invMassA = ballA.GetInvMass();
 	float invMassB = ballB.GetInvMass();
+	float restetution = 1.0f / (ballA.GetInvRestetution() + ballB.GetInvRestetution());
+	float friction = 1.0f / (ballA.GetInvFriction() + ballB.GetInvFriction());
 
 	vector2df relativeVelocity = velocityB + angularVelocityB * RotateCCW(collision.m_collisionPoint - posB)
 		- (velocityA + angularVelocityA * RotateCCW(collision.m_collisionPoint - posA));
@@ -65,25 +61,20 @@ void CollisionSolver::ResolveBallToBallCollision(Ball& ballA, Ball& ballB, const
 	{
 		vector2df rap = collision.m_collisionPoint - posA;
 		vector2df rbp = collision.m_collisionPoint - posB;
-		float imp = calc_impulse_p_p(0.5f, sv, collision.m_collisionNormal.x, collision.m_collisionNormal.y, 1.0f / invMassA,
-			1.0f / invMassB, rap, rbp, 1.0f / ballA.GetInvMomentumOfI(),
-			1.0f / ballB.GetInvMomentumOfI());
-		float maxTangentImpulse = imp * 0.5f;
+		float imp = CalcImpulse(restetution, sv, collision.m_collisionNormal.x, collision.m_collisionNormal.y, invMassA,
+			invMassB, rap, rbp, ballA.GetInvMomentumOfI(), ballB.GetInvMomentumOfI());
+		float maxTangentImpulse = imp * friction;
 
 		velocityA -= imp * invMassA * collision.m_collisionNormal;
 		velocityB += imp * invMassB * collision.m_collisionNormal;
 		angularVelocityA += imp * Cross(rap, collision.m_collisionNormal) * ballA.GetInvMomentumOfI();
 		angularVelocityB -= imp * Cross(rbp, collision.m_collisionNormal) * ballB.GetInvMomentumOfI();
 
-
 		// friction
 		vector2df tangent = RotateCCW(collision.m_collisionNormal);
 		float tangentVelocity = tangent * relativeVelocity;
-		float timp = calc_impulse_p_p(0.0f, tangentVelocity * 0.8f, tangent.x, tangent.y,
-			1.0f / invMassA,
-			1.0f / invMassB, rap, rbp,
-			1.0f / ballA.GetInvMomentumOfI(),
-			1.0f / ballB.GetInvMomentumOfI());
+		float timp = CalcImpulse(0.0f, tangentVelocity * 0.8f, tangent.x, tangent.y,
+			invMassA, invMassB, rap, rbp, ballA.GetInvMomentumOfI(), ballB.GetInvMomentumOfI());
 
 		timp = timp > maxTangentImpulse ? maxTangentImpulse : timp;
 		timp = timp <-maxTangentImpulse ? -maxTangentImpulse : timp;
@@ -115,12 +106,14 @@ void CollisionSolver::ResolveBallToChainCollision(Ball& ball, Chain& chain, cons
 	float angularVelocity = ball.GetAngularVelocity();
 	vector2df position = ball.GetPosition();
 	float invMass = ball.GetInvMass();
+	float restetution = 1.0f / ball.GetInvRestetution();
+	float friction = 1.0f / ball.GetInvFriction();
 
 	vector2df relativeVelocity = -(velocity + angularVelocity * RotateCCW(collision.m_collisionPoint - position));
 	float sv = collision.m_collisionNormal * relativeVelocity;
 	if (sv > -1e6f && sv < 0)
 	{
-		float dv = -sv * (1.f + 0.8f);
+		float dv = -sv * (1.f + restetution);
 		float impulseModule = dv / invMass;
 		vector2df impulse = collision.m_collisionNormal * impulseModule;
 		velocity -= impulse * invMass;
@@ -128,7 +121,7 @@ void CollisionSolver::ResolveBallToChainCollision(Ball& ball, Chain& chain, cons
 		// friction
 		vector2df tangent = RotateCCW(collision.m_collisionNormal);
 		float tangentVelocity = tangent * relativeVelocity;
-		float dtv = tangentVelocity*0.9f;
+		float dtv = tangentVelocity * friction;
 		float totalTangentInvMass = ball.GetSQRadius() * ball.GetInvMomentumOfI();
 		float tangentImpulseModule = dtv / totalTangentInvMass;
 		float maxTangentImpulse = impulseModule / ball.GetInvFriction();
@@ -145,4 +138,11 @@ void CollisionSolver::ResolveBallToChainCollision(Ball& ball, Chain& chain, cons
 	float d = (position - collision.m_collisionPoint).GetLength();
 	position -= collision.m_collisionNormal*(ball.GetRadius() - d);
 	ball.SetPosition(position);
+}
+
+inline float CollisionSolver::CalcImpulse(float e, float sv, float nx, float ny, float ima, float imb,
+	vector2df rap, vector2df rbp, float iia, float iib)
+{
+	float tmp = ima + imb + pow(rap.x*ny - rap.y*nx, 2) * iia + pow(rbp.x*ny - rbp.y*nx, 2) * iib;
+	return -(1 + e)*sv / tmp;
 }

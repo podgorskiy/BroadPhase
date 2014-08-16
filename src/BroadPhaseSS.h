@@ -83,9 +83,7 @@ class BroadPhaseSS : public IBroadPhase
 		Type m_type;
 		int m_index0;
 		int m_index1;
-
 	};
-
 
 public:
 	BroadPhaseSS(int bodiesCount);

@@ -9,6 +9,7 @@ class PerformanceMeasurementsHelper
 
 public:
 	static int GetParameter(ProfileScopes::Scope scope);
+	static long long GetSum(ProfileScopes::Scope scope);
 
 protected:
 	void SetValue(ProfileScopes::Scope scope, long value);
@@ -19,7 +20,7 @@ private:
 	static int m_parameters[ProfileScopes::CountOfProfileScopes];
 	static int m_pAccumulator[ProfileScopes::CountOfProfileScopes];
 	static int m_pAccumulatorItCount[ProfileScopes::CountOfProfileScopes];
-	unsigned long m_consumedTime;
+	static long long m_sum[ProfileScopes::CountOfProfileScopes];
 };
 
 class IParameter
@@ -53,8 +54,8 @@ private:
 
 inline void PerformanceMeasurementsHelper::SetValue(ProfileScopes::Scope scope, long value)
 {
-    m_pAccumulator[scope] += value;
-    SubmitValue(scope);
+	m_pAccumulator[scope] += value;
+	SubmitValue(scope);
 }
 
 inline void PerformanceMeasurementsHelper::IncValue(ProfileScopes::Scope scope)
@@ -64,13 +65,14 @@ inline void PerformanceMeasurementsHelper::IncValue(ProfileScopes::Scope scope)
 
 inline void PerformanceMeasurementsHelper::SubmitValue(ProfileScopes::Scope scope)
 {
-    int iteration = ++m_pAccumulatorItCount[scope];
-    if (iteration >= OUTPUT_AVERAGE_OF)
-    {
-        m_pAccumulatorItCount[scope] = 0;
-        m_parameters[scope] = m_pAccumulator[scope] / iteration;
-        m_pAccumulator[scope] = 0;
-    }
+	int iteration = ++m_pAccumulatorItCount[scope];
+	if (iteration >= OUTPUT_AVERAGE_OF)
+	{
+		m_sum[scope] += m_pAccumulator[scope];
+		m_pAccumulatorItCount[scope] = 0;
+		m_parameters[scope] = m_pAccumulator[scope] / iteration;
+		m_pAccumulator[scope] = 0;
+	}
 }
 
 inline IParameter::~IParameter()

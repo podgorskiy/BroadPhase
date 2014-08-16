@@ -15,7 +15,6 @@ void CDebugDrawer::DrawCircle(const vector2df& position, float radius)
 	{
 		m_points.push_back(position + vector2df(cosf((2.0f * float(M_PI) / k_pointsInCircle) * i), sinf((2.0f * float(M_PI) / k_pointsInCircle) * i)) * radius);
 	}
-	//const unsigned char color[] = { 0xFF, 0xFF, 0xFF };
 	DrawClosedSequenceOfLines(&m_points[0], m_points.size());
 }
 

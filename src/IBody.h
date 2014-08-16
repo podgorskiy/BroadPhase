@@ -33,6 +33,6 @@ public:
 	virtual float		GetInvFriction() const = 0;
 
 	virtual void		UpdatePosition(float dt) = 0;
-	virtual BodyType	GetBodyType() = 0;
-	virtual void		DebugDraw(IDebugDrawer* drawer) = 0;
+	virtual BodyType	GetBodyType() const = 0;
+	virtual void		DebugDraw(IDebugDrawer* drawer) const = 0;
 };

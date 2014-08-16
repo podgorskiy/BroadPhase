@@ -18,8 +18,8 @@ public:
 
 	virtual vector2df	GetLinearVelocity() const;
 	virtual void		SetLinearVelocity(const vector2df& v);
-	virtual void		SetAngularVelocity(float w);
 	virtual float		GetAngularVelocity() const;
+	virtual void		SetAngularVelocity(float w);
 
 	virtual float		GetRadius() const;
 	virtual float		GetSQRadius() const;
@@ -30,8 +30,8 @@ public:
 	virtual float		GetInvFriction() const;
 
 	virtual void		UpdatePosition(float dt);
-	virtual BodyType	GetBodyType();
-	virtual void		DebugDraw(IDebugDrawer* drawer);
+	virtual BodyType	GetBodyType() const;
+	virtual void		DebugDraw(IDebugDrawer* drawer) const;
 
 private:
 	vector2df	m_position;

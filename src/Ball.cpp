@@ -111,12 +111,12 @@ float Ball::GetSQRadius() const
 	return m_radiusSQ;
 }
 
-Ball::BodyType Ball::GetBodyType()
+Ball::BodyType Ball::GetBodyType() const
 {
 	return BTypeBall;
 }
 
-void Ball::DebugDraw(IDebugDrawer* drawer)
+void Ball::DebugDraw(IDebugDrawer* drawer) const
 {
 	drawer->DrawCircle(m_position, m_radius);
 	drawer->DrawLine(m_position, m_position + vector2df(m_angle) * m_radius);

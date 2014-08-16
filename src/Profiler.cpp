@@ -7,13 +7,19 @@
 #include <time.h>
 #endif
 
-int PerformanceMeasurementsHelper::m_parameters[ProfileScopes::CountOfProfileScopes] = {0};
-int PerformanceMeasurementsHelper::m_pAccumulator[ProfileScopes::CountOfProfileScopes] = {0};
-int PerformanceMeasurementsHelper::m_pAccumulatorItCount[ProfileScopes::CountOfProfileScopes] = {0};
+int PerformanceMeasurementsHelper::m_parameters[ProfileScopes::CountOfProfileScopes] = { 0 };
+int PerformanceMeasurementsHelper::m_pAccumulator[ProfileScopes::CountOfProfileScopes] = { 0 };
+int PerformanceMeasurementsHelper::m_pAccumulatorItCount[ProfileScopes::CountOfProfileScopes] = { 0 };
+long long PerformanceMeasurementsHelper::m_sum[ProfileScopes::CountOfProfileScopes] = { 0 };
 
 int PerformanceMeasurementsHelper::GetParameter(ProfileScopes::Scope scope)
 {
 	return m_parameters[scope];
+}
+
+long long PerformanceMeasurementsHelper::GetSum(ProfileScopes::Scope scope)
+{
+	return m_sum[scope];
 }
 
 TimeProfiler::TimeProfiler(PerformanceMeasurementsHelper* owner, ProfileScopes::Scope scope) : IParameter(owner, scope)

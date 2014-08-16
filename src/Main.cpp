@@ -23,19 +23,22 @@
 
 int main(int argc, char **argv)
 {
-	TCLAP::CmdLine cmd("The BroadPhase is a simple example of 2d physics engine that describes "
-					   "the role of broad phase in physics simulations and collision detection "
-					   "in particular. It demonstrates a naive implementation and sweep and "
-					   "prune approach", ' ', "0.1");
+	TCLAP::CmdLine cmd(	"The BroadPhase is a simple example of 2d physics engine that describes "
+						"the role of broad phase in physics simulations and collision detection "
+						"in particular. It demonstrates a naive implementation and sweep and "
+						"prune approach", ' ', "0.1");
 	TCLAP::ValueArg<int> ballsCount(	"b", "ballscount",		"Number of balls in simulation. Default value is 200", false, 200, "int");
-	TCLAP::SwitchArg sortAndSweep(		"s", "sortandsweep",	"Enables sort and sweep approach.", cmd, false);
-	TCLAP::ValueArg<int> subStepsCount(	"u", "substeps",		"Number of substeps"
+	TCLAP::SwitchArg sortAndSweep("s", "sortandsweep", "Enables sort and sweep approach.", cmd, false);
+	TCLAP::ValueArg<int> subStepsCount("u", "substeps", "Number of substeps"
 		"Count of physics frames per every draw frame. Default value is 10", false, 10, "int");
+	TCLAP::ValueArg<int> framesToMeasure("f", "frames", "Number of frames"
+		"that would be taken into account while measuring performance of broad phase.", false, 1000, "int");
 	cmd.add(ballsCount);
 	cmd.add(subStepsCount);
+	cmd.add(framesToMeasure);
 	cmd.parse(argc, argv);
 
-	Application* app = new Application(subStepsCount.getValue(), sortAndSweep.getValue());
+	Application* app = new Application(subStepsCount.getValue(), sortAndSweep.getValue(), framesToMeasure.getValue());
 
 	// Fill the world with some physics objects.
 	app->CreateWorld(ballsCount.getValue());
@@ -112,6 +115,11 @@ void Application::Run()
 
 		m_window.EndDraw();
 
+		if (++m_framesN == m_framesToMeasure)
+		{
+			PrintStatistics();
+		}
+
 		SleepMS(10);
 	}
 }
@@ -163,6 +171,22 @@ void Application::DrawFrameInfo()
 	}
 }
 
+void Application::PrintStatistics()
+{
+	int divider = m_framesToMeasure * m_subStepsCount;
+	std::vector<OutputDebug> outputBuffer;
+	outputBuffer.push_back(OutputDebug("Broad phase average time: %.1fus\n",
+		PerformanceMeasurementsHelper::GetSum(ProfileScopes::BroadPhase) / divider / 1000.0f, NULL));
+	outputBuffer.push_back(OutputDebug("Narrow phase average time: %.1fus\n",
+		PerformanceMeasurementsHelper::GetSum(ProfileScopes::NarrowPhase) / divider / 1000.0f, NULL));
+	outputBuffer.push_back(OutputDebug("Collision solver average time: %.1fus\n",
+		PerformanceMeasurementsHelper::GetSum(ProfileScopes::CollisionSolver) / divider / 1000.0f, NULL));
+	for (std::vector<OutputDebug>::const_iterator it = outputBuffer.begin(); it != outputBuffer.end(); ++it)
+	{
+		printf(it->m_value().c_str());
+	}
+}
+
 void Application::CreateWorld(int ballsCount)
 {
 	// Let's fill bodies container with balls that have some random properties.
@@ -179,7 +203,6 @@ void Application::CreateWorld(int ballsCount)
 	}
 
 	// Let's create some chains that would limit move of balls.
-
 	float verticesA[] = {
 		-5.235f, -4.108f,
 		-2.41f, -4.1081f,

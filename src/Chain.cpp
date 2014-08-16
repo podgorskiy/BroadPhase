@@ -5,23 +5,21 @@
 #include "Chain.h"
 #include "IDebugDrawer.h"
 
-Chain::Chain()
-{
-}
+Chain::Chain() {}
 
-Chain::~Chain() {};
+Chain::~Chain() {}
 
 aabb2df	Chain::GetAABB() const
 {
 	return m_aabb;
 }
 
-IBody::BodyType Chain::GetBodyType()
+IBody::BodyType Chain::GetBodyType() const
 {
 	return IBody::BTypeChain;
 }
 
-void Chain::DebugDraw(IDebugDrawer* drawer)
+void Chain::DebugDraw(IDebugDrawer* drawer) const
 {
 	drawer->DrawSequenceOfLines(&m_vertices[0], m_vertices.size());
 }
