@@ -88,7 +88,7 @@ class BroadPhaseSS : public IBroadPhase
 public:
 	BroadPhaseSS(int bodiesCount);
 
-	virtual void UpdateAABBList(const std::vector<IBody*> bodiesList);
+	virtual void UpdateAABBList(const std::vector<IBody*>& bodiesList);
 	virtual const std::vector<std::pair<int, int> >& GenerateOverlapList();
 
 private:

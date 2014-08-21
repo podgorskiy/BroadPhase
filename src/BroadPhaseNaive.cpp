@@ -12,7 +12,7 @@ BroadPhaseNaive::BroadPhaseNaive(int bodiesCount)
 	m_overlapingList.reserve(5 * bodiesCount); //rough estimate
 }
 
-void BroadPhaseNaive::UpdateAABBList(const std::vector<IBody*> bodiesList)
+void BroadPhaseNaive::UpdateAABBList(const std::vector<IBody*>& bodiesList)
 {
 	m_aabbList.resize(bodiesList.size());
 	int index = 0;

@@ -8,7 +8,7 @@
   the role of broad phase in physics simulations and collision detection
   in particular. It demonstrates a naive implementation and sweep and 
   prune approach. This project was used as a demonstration for this
-  article: http://podgorskiy.com/?p=40#more-40
+  article: http://podgorskiy.com/?p=40
     
   Third party
   ---------

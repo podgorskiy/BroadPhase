@@ -13,7 +13,7 @@ BroadPhaseSS::BroadPhaseSS(int bodiesCount)
 	m_events.reserve(bodiesCount);	//rough estimate
 }
 
-void BroadPhaseSS::UpdateAABBList(const std::vector<IBody*> bodiesList)
+void BroadPhaseSS::UpdateAABBList(const std::vector<IBody*>& bodiesList)
 {
 	m_aabbList.resize(bodiesList.size());
 	int index = 0;
