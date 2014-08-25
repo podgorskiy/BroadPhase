@@ -2,6 +2,7 @@
 #include "vector2d.h"
 #include "GeometryOperations2D.h"
 #include "aabb.h"
+#include "CStyleArray.h"
 #include "Collision.h"
 #include "IBody.h"
 #include "Ball.h"
@@ -19,15 +20,21 @@ int NarrowPhase::GetNumOfCollisions()
 	return m_collisionNumber;
 }
 
-const std::vector<Collision>& NarrowPhase::DetectCollisions(const std::vector<std::pair<int, int> >& overlapingList, const std::vector<IBody*>& bodies)
+const std::vector<Collision>& NarrowPhase::DetectCollisions(const CStyleArray<int>& overlapingList, const std::vector<IBody*>& bodies)
 {
 	TimeProfiler broadPhaseTime(this, ProfileScopes::NarrowPhase);
 
 	collisionsList.clear();
-	for (std::vector<std::pair<int, int> >::const_iterator it = overlapingList.begin(); it != overlapingList.end(); ++it)
+	for (int it = 0; it != overlapingList.size(); ++it)
 	{
-		IBody* bodyA = bodies[it->first];
-		IBody* bodyB = bodies[it->second];
+		if (overlapingList[it] == -1)
+		{
+			continue;
+		}
+		int index0 = overlapingList[it] & 0x0000FFFF;
+		int index1 = overlapingList[it] >> 16;
+		IBody* bodyA = bodies[index0];
+		IBody* bodyB = bodies[index1];
 		Collision collision;
 		int collisionType = bodyA->GetBodyType() | bodyB->GetBodyType();
 		switch (collisionType)
@@ -38,8 +45,8 @@ const std::vector<Collision>& NarrowPhase::DetectCollisions(const std::vector<st
 				Ball* ballB = static_cast<Ball*>(bodyB);
 				if (BallToBallCollisionTest(*ballA, *ballB, collision))
 				{
-					collision.m_indexA = it->first;
-					collision.m_indexB = it->second;
+					collision.m_indexA = index0;
+					collision.m_indexB = index1;
 					collisionsList.push_back(collision);
 					IncValue(ProfileScopes::CountOfCollisionsOccurred);
 				}
@@ -47,8 +54,8 @@ const std::vector<Collision>& NarrowPhase::DetectCollisions(const std::vector<st
 			break;
 			case IBody::BTypeBall | IBody::BTypeChain: //ball to chain collision
 			{
-				int indexA = it->first;
-				int indexB = it->second;
+				int indexA = index0;
+				int indexB = index1;
 				if (bodyA->GetBodyType() == IBody::BTypeChain)
 				{
 					std::swap(bodyA, bodyB);

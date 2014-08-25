@@ -3,6 +3,7 @@
 #include "VisualizationWinow.h"
 #include "vector2d.h"
 #include "aabb.h"
+#include "CStyleArray.h"
 #include "IDebugDrawer.h"
 #include "CDebugDrawer.h"
 #include "IBody.h"
@@ -89,7 +90,7 @@ void Application::Run()
 			m_broadPhase->UpdateAABBList(m_bodies);
 
 			// Broad Phase
-			const std::vector<std::pair<int, int> >& overlapingList = m_broadPhase->GenerateOverlapList();
+			const CStyleArray<int>& overlapingList = m_broadPhase->GenerateOverlapList();
 
 			// Narrow phase
 			const std::vector<Collision>& collisionList = m_narrowPhase->DetectCollisions(overlapingList, m_bodies);
@@ -119,8 +120,6 @@ void Application::Run()
 		{
 			PrintStatistics();
 		}
-
-		SleepMS(10);
 	}
 }
 

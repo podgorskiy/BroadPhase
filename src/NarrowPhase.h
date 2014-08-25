@@ -3,7 +3,7 @@ class NarrowPhase : PerformanceMeasurementsHelper
 public:
 	NarrowPhase(int bodiesCount);
 
-	const std::vector<Collision>& DetectCollisions(const std::vector<std::pair<int, int> >& overlapingList, const std::vector<IBody*>& bodies);
+	const std::vector<Collision>& DetectCollisions(const CStyleArray<int>& overlapingList, const std::vector<IBody*>& bodies);
 
 	int GetNumOfCollisions();
 private:

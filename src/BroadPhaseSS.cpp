@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "vector2d.h"
 #include "aabb.h"
+#include "CStyleArray.h"
 #include "IBody.h"
 #include "Profiler.h"
 #include "IBroadPhase.h"
@@ -9,8 +10,10 @@
 BroadPhaseSS::BroadPhaseSS(int bodiesCount)
 {
 	m_aabbList.reserve(bodiesCount);
-	m_overlapingList.reserve(5 * bodiesCount); //rough estimate
-	m_events.reserve(bodiesCount);	//rough estimate
+	m_overlapingList.New(10 * bodiesCount); //rough estimate
+	m_iteratorList.New(10 * bodiesCount);
+	m_eventsMaxCount = 10 * bodiesCount;
+	m_events.New(m_eventsMaxCount);
 }
 
 void BroadPhaseSS::UpdateAABBList(const std::vector<IBody*>& bodiesList)
@@ -59,7 +62,8 @@ void BroadPhaseSS::UpdateEndPoints()
 	}
 }
 
-inline bool BroadPhaseSS::Overlapping(int i0, int i1, const std::vector<int>& lookUp, const std::vector<EndPoint>& endpoints)
+
+inline bool BroadPhaseSS::Overlapping(int i0, int i1, const int* lookUp, const EndPoint* endpoints)
 {
 	IncValue(ProfileScopes::CountOfChecksInBroadPhase);
 	float max0 = endpoints[lookUp[2 * i0 + 1]].m_value;
@@ -73,12 +77,16 @@ inline bool BroadPhaseSS::Overlapping(int i0, int i1, const std::vector<int>& lo
 	return min0 <= max1;
 }
 
-void BroadPhaseSS::UpdateIntervals(std::vector<EndPoint>& endpoints, std::vector<int>& lookUp)
+void BroadPhaseSS::UpdateIntervals(const CStyleArray<EndPoint>& endpoints, const CStyleArray<int>& lookUp)
 {
-	int i = 0;
-	for (std::vector<EndPoint>::iterator it = endpoints.begin(); it != endpoints.end(); ++it, ++i)
+	ConstCStyleArray<int> lookUpX(m_lookUpX);
+	ConstCStyleArray<int> lookUpY(m_lookUpY);
+	ConstCStyleArray<EndPoint> endPointsX(m_endPointsX);
+	ConstCStyleArray<EndPoint> endPointsY(m_endPointsY);
+	
+	for (int i = 0, l = endpoints.size(); i < l; ++i)
 	{
-		EndPoint key = *it;
+		EndPoint key = endpoints[i];
 		int j = i - 1;
 		while (j >= 0 && key < endpoints[j])
 		{
@@ -103,7 +111,7 @@ void BroadPhaseSS::UpdateIntervals(std::vector<EndPoint>& endpoints, std::vector
 				{
 					int j0 = end0.GetIndex();
 					int j1 = end1.GetIndex();
-					if (j0 != j1 && Overlapping(j0, j1, m_lookUpX, m_endPointsX) && Overlapping(j0, j1, m_lookUpY, m_endPointsY))
+					if (j0 != j1 && Overlapping(j0, j1, lookUpX, endPointsX) && Overlapping(j0, j1, lookUpY, endPointsY))
 					{
 						m_events.push_back(Event(j0, j1, Event::Insert));
 					}
@@ -115,13 +123,17 @@ void BroadPhaseSS::UpdateIntervals(std::vector<EndPoint>& endpoints, std::vector
 			lookUp[end0.GetLookUp()] = j + 1;
 			--j;
 			IncValue(ProfileScopes::CountOfSwaps);
+			if (m_events.size() >= m_eventsMaxCount)
+			{
+				return;
+			}
 		}
 		endpoints[j + 1] = key;
 		lookUp[key.GetLookUp()] = j + 1;
 	}
 }
 
-const std::vector<std::pair<int, int> >& BroadPhaseSS::GenerateOverlapList()
+const CStyleArray<int>& BroadPhaseSS::GenerateOverlapList()
 {
 	TimeProfiler broadPhaseTime(this, ProfileScopes::BroadPhase);
 
@@ -133,7 +145,7 @@ const std::vector<std::pair<int, int> >& BroadPhaseSS::GenerateOverlapList()
 	{
 		TimeProfiler broadPhaseTime(this, ProfileScopes::UpdateIntervals);
 
-		m_events.clear();
+		m_events.size() = 0;
 		UpdateIntervals(m_endPointsX, m_lookUpX);
 		UpdateIntervals(m_endPointsY, m_lookUpY);
 
@@ -144,26 +156,32 @@ const std::vector<std::pair<int, int> >& BroadPhaseSS::GenerateOverlapList()
 	{
 		TimeProfiler broadPhaseTime(this, ProfileScopes::ConsumeEvents);
 
-		for (std::vector<Event>::iterator it = m_events.begin(); it != m_events.end(); ++it)
+		for (int it = 0, l = m_events.size(); it != l; ++it)
 		{
-			if (it->GetType() == Event::Remove)
+			const Event e(m_events[it]);
+			const int key = e.GetKey();
+			if (e.GetType() == Event::Remove)
 			{
-				m_ovelapsSet.erase(std::make_pair(it->GetIndex0(), it->GetIndex1()));
+				std::map<int, short>::iterator it = m_ovelapsMap.find(key);
+				if (it != m_ovelapsMap.end())
+				{
+					unsigned short indexToDelete = it->second;
+					m_overlapingList[indexToDelete] = m_overlapingList.pop_back();
+					std::map<int, short>::iterator itModify = m_iteratorList[indexToDelete] = m_iteratorList.pop_back();
+					itModify->second = indexToDelete;
+					m_ovelapsMap.erase(it);
+				}
 			}
 			else
 			{
-				m_ovelapsSet.insert(std::make_pair(it->GetIndex0(), it->GetIndex1()));
+				std::map<int, short>::iterator it = m_ovelapsMap.find(key);
+				if (it == m_ovelapsMap.end())
+				{
+					std::pair<std::map<int, short>::iterator, bool> inserted = m_ovelapsMap.insert(std::pair<int, short>(key, m_overlapingList.size()));
+					m_overlapingList.push_back(key);
+					m_iteratorList.push_back(inserted.first);
+				}
 			}
-		}
-	}
-
-	{
-		TimeProfiler broadPhaseTime(this, ProfileScopes::CreateOverlapingList);
-
-		m_overlapingList.clear();
-		for (std::set<std::pair<int, int> >::iterator it = m_ovelapsSet.begin(); it != m_ovelapsSet.end(); ++it)
-		{
-			m_overlapingList.push_back(*it);
 		}
 	}
 

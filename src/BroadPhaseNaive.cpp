@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "vector2d.h"
 #include "aabb.h"
+#include "CStyleArray.h"
 #include "IBody.h"
 #include "Profiler.h"
 #include "IBroadPhase.h"
@@ -9,7 +10,7 @@
 BroadPhaseNaive::BroadPhaseNaive(int bodiesCount)
 {
 	m_aabbList.reserve(bodiesCount);
-	m_overlapingList.reserve(5 * bodiesCount); //rough estimate
+	m_overlapingList.New(5 * bodiesCount); //rough estimate
 }
 
 void BroadPhaseNaive::UpdateAABBList(const std::vector<IBody*>& bodiesList)
@@ -22,11 +23,11 @@ void BroadPhaseNaive::UpdateAABBList(const std::vector<IBody*>& bodiesList)
 	}
 }
 
-const std::vector<std::pair<int, int> >& BroadPhaseNaive::GenerateOverlapList()
+const CStyleArray<int>& BroadPhaseNaive::GenerateOverlapList()
 {
 	TimeProfiler broadPhaseTime(this, ProfileScopes::BroadPhase);
 
-	m_overlapingList.clear();
+	m_overlapingList.size() = 0;
 	int indexA = 0;
 	for (std::vector<aabb2df>::const_iterator ita = m_aabbList.begin(); ita != m_aabbList.end(); ++ita, ++indexA)
 	{
@@ -35,7 +36,7 @@ const std::vector<std::pair<int, int> >& BroadPhaseNaive::GenerateOverlapList()
 		{
 			if (Overlapping(*ita, *itb))
 			{
-				m_overlapingList.push_back(std::make_pair(indexA, indexB));
+				m_overlapingList.push_back(indexA | (indexB<<16));
 			}
 			IncValue(ProfileScopes::CountOfChecksInBroadPhase);
 		}
