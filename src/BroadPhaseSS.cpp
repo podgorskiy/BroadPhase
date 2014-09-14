@@ -79,10 +79,10 @@ inline bool BroadPhaseSS::Overlapping(int i0, int i1, const int* lookUp, const E
 
 void BroadPhaseSS::UpdateIntervals(const CStyleArray<EndPoint>& endpoints, const CStyleArray<int>& lookUp)
 {
-	ConstCStyleArray<int> lookUpX(m_lookUpX);
-	ConstCStyleArray<int> lookUpY(m_lookUpY);
-	ConstCStyleArray<EndPoint> endPointsX(m_endPointsX);
-	ConstCStyleArray<EndPoint> endPointsY(m_endPointsY);
+	const CStyleArray<int> lookUpX(m_lookUpX);
+	const CStyleArray<int> lookUpY(m_lookUpY);
+	const CStyleArray<EndPoint> endPointsX(m_endPointsX);
+	const CStyleArray<EndPoint> endPointsY(m_endPointsY);
 	
 	for (int i = 0, l = endpoints.size(); i < l; ++i)
 	{
