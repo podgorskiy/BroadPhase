@@ -135,32 +135,32 @@ void Application::DrawFrameInfo()
 {
 	std::vector<OutputDebug> outputBuffer;
 	outputBuffer.push_back(OutputDebug("Broad phase time: %.1fus",
-		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::BroadPhase) / 1000.0f, wight));
+		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::BroadPhase) / 1000.0f, white));
 	outputBuffer.push_back(OutputDebug("Narrow phase time: %.1fus",
-		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::NarrowPhase) / 1000.0f, wight));
+		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::NarrowPhase) / 1000.0f, white));
 	outputBuffer.push_back(OutputDebug("Collision solver time: %.1fus",
-		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CollisionSolver) / 1000.0f, wight));
+		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CollisionSolver) / 1000.0f, white));
 	outputBuffer.push_back(OutputDebug("Count of checks in broad phase: %d",
-		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfChecksInBroadPhase), wight));
+		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfChecksInBroadPhase), white));
 	outputBuffer.push_back(OutputDebug("Count of potential collisions: %d",
-		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfPotentialCollisions), wight));
+		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfPotentialCollisions), white));
 	outputBuffer.push_back(OutputDebug("Count of collisions occurred: %d",
-		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfCollisionsOccurred), wight));
+		PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfCollisionsOccurred), white));
 
 	if (m_sortAndSweep)
 	{
 		outputBuffer.push_back(OutputDebug("Count of swaps occurred: %d",
-			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfSwaps), wight));
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfSwaps), white));
 		outputBuffer.push_back(OutputDebug("Count of events dispatched: %d",
-			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfEventsDispatched), wight));
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CountOfEventsDispatched), white));
 		outputBuffer.push_back(OutputDebug("UpdateEndPoint:  %.1fus",
-			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::UpdateEndPoint) / 1000.0f, wight));
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::UpdateEndPoint) / 1000.0f, white));
 		outputBuffer.push_back(OutputDebug("UpdateIntervals:  %.1fus",
-			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::UpdateIntervals) / 1000.0f, wight));
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::UpdateIntervals) / 1000.0f, white));
 		outputBuffer.push_back(OutputDebug("ConsumeEvents:  %.1fus",
-			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::ConsumeEvents) / 1000.0f, wight));
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::ConsumeEvents) / 1000.0f, white));
 		outputBuffer.push_back(OutputDebug("CreateOverlapingList:  %.1fus",
-			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CreateOverlapingList) / 1000.0f, wight));
+			PerformanceMeasurementsHelper::GetParameter(ProfileScopes::CreateOverlapingList) / 1000.0f, white));
 	}
 
 	vector2d<int> textPosition(5, 20);

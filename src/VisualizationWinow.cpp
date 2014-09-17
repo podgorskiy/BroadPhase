@@ -65,8 +65,8 @@ void VisualizationWinow::DrawAxes() const
 	int xv,yv0,yv1;
 	toScreen(0, m_size/2.0f,xv,yv0);
 	toScreen(0,-m_size/2.0f,xv,yv1);
-	m_canvas->draw_line(xh1,yh,xh0,yh,wight);
-	m_canvas->draw_line(xv,yv1,xv,yv0,wight);
+	m_canvas->draw_line(xh1, yh, xh0, yh, white);
+	m_canvas->draw_line(xv, yv1, xv, yv0, white);
 	char txt[32] = { 0 };
 	for(int i=-5;i<=5;i++)
 	{
@@ -79,11 +79,11 @@ void VisualizationWinow::DrawAxes() const
 		ty = 7;
 		int x,y;
 		toScreen(float(xi), 0.f, x, y);
-		m_canvas->draw_point(x,y+1,wight,1).draw_point(x,y-1,wight,1);
-		m_canvas->draw_text(x-tx,y+2,txt,wight,black,1,15);
+		m_canvas->draw_point(x, y + 1, white, 1).draw_point(x, y - 1, white, 1);
+		m_canvas->draw_text(x - tx, y + 2, txt, white, black, 1, 15);
 		toScreen(0.f, float(xi), x,y);
-		m_canvas->draw_point(x+1,y,wight,1).draw_point(x-1,y,wight,1);
-		m_canvas->draw_text(x+4,y-ty,txt,wight,black,1,15);
+		m_canvas->draw_point(x + 1, y, white, 1).draw_point(x - 1, y, white, 1);
+		m_canvas->draw_text(x + 4, y - ty, txt, white, black, 1, 15);
 	}
 }
 
@@ -103,5 +103,5 @@ void VisualizationWinow::DrawLine(float wx0, float wy0, float wx1, float wy1, co
 
 void VisualizationWinow::DrawTextL(std::string text, int s_x, int s_y, const unsigned char* color) const
 {
-	m_canvas->draw_text(s_x, s_y, text.c_str(), wight, black, 1, 15, 1.0f, 15);
+	m_canvas->draw_text(s_x, s_y, text.c_str(), white, black, 1, 15, 1.0f, 15);
 }
